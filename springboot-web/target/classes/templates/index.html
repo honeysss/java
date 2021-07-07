@@ -1,0 +1,288 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/common.js"></script>
+    <title>文章管理系统</title>
+
+    <script>
+
+    </script>
+
+</head>
+<body>
+<!-- new -->
+	<div th:if="${type == 'delete'}">
+		<div class="alert alert-success alert-dismissable">
+		    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+		        &times;
+			</button>
+			文章删除成功！
+		</div>
+</div>
+
+		<div th:if="${type == 'publish'}">
+		<div class="alert alert-success alert-dismissable">
+		    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+		        &times;
+			</button>
+			文章发布成功！
+		</div>
+</div>
+
+
+		<div th:if="${type == 'update'}">
+		<div class="alert alert-success alert-dismissable">
+		    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+		        &times;
+			</button>
+			文章修改成功！
+		</div>
+</div>
+
+<input type="hidden" th:value="${title}" id="filterTitle">
+
+<!--    顶部内容-->
+    <div class="top-content">
+        <h1 class="top-h1">文章管理系统</h1>
+        <div class="public-article">
+            <a href="article-publish.html" title="发布文章" class="public">发布文章</a>
+        </div>
+    </div>
+
+<!--    中间内容-->
+    <div class="middle-content">
+
+      <div id="changePage">
+		  <a href="javascript:;" id="toFirstPage">首页</a>
+		  <a href="javascript:;" id="backPage" >上一页</a>
+		  <a href="javascript:;" id="forwardPage">下一页</a>
+		  <a href="javascript:;" id="toLastPage">尾页</a>
+		  <br/>
+		<span>跳到第</span>
+			<input type="text" id="toPage"/>
+		<span>页</span>
+		<a href="javascript:;" id="toThePage">确认跳转</a>
+		<br/><span>共<b th:text="${allNum }"></b>条数据</span>
+		<span>分<b th:text="${allPageNum }"></b>页显示</span>
+		<span>当前是第<b th:text="${pageNum }"></b>页</span>
+	</div>
+	<input type="hidden" th:value="${pageNum}" id="pageNum" />
+	<input type="hidden" th:value="${allPageNum}" id="allPageNum" />
+	<input type="hidden" th:value="${title}" id="oldTitle" />
+
+
+
+	</div>
+
+<!--        文章信息-->
+<div class="middle-left-content">
+	<!--        搜索框-->
+	<div class="middle-right-content">
+		<div class="search-content">
+			<form method="post" action="search.action" id="form">
+				<div class="input-group">
+					<input type="hidden" value="1" name="pageNum" />
+					<input type="text" placeholder="请在这里输入文章标题..." class="search form-control" name="title" id="title">
+					<span class="input-group-btn">
+	                                <button type="submit" class="btn btn-default" id="publishBtn">
+	                                    <span ></span> Search
+	                                </button>
+	                       		 </span>
+				</div>
+			</form>
+		</div>
+		<hr class="cut0">
+	</div>
+
+
+
+	<div class="article-list" th:if="${articles != null}" th:each="article:${articles}">
+
+		<h1 class="article-title" th:text="${article.getTitle()}"></h1>
+		<p class="article-author" th:text="${article.getAuthor()}"></p>
+		<p class="article-content" th:text="${article.getContent()}"></p>
+		<div class="article-foot">
+			<input th:value="${article.getId()}" id="theID" type="hidden"/>
+			<input th:value="${article.getContent()}" id="theContent" type="hidden"/>
+			<input th:value="${article.getTitle()}" id="theTitle" type="hidden"/>
+			<a href="javascript:;" class="detail">
+				<h4>详情=>></h4>
+			</a>
+
+			<a href="javascript:;" class="update modify">
+				<h4>修改=>></h4>
+			</a>
+			<a href="javascript:;" class="delete"  id="delete">
+				<h4>删除=>></h4>
+			</a>
+			<a href="javascript:;" class="download">
+				<h4>下载=>></h4>
+			</a>
+
+		</div>
+
+		<hr class="cut2">
+	</div>
+
+
+
+
+
+
+		<hr class="cut0">
+	</div>
+
+</div>
+	<script>
+		$(document).ready(function() {
+			$('#publishBtn').click(function() {
+				var title = $('#title').val().trim();
+				$('#form').submit();
+				// if (title != null && title != '') {
+				// 	$('#form').submit();
+				// } else {
+				// 	alert('不能为空');
+				// }
+			})
+			//详情
+			var details = $('.article-foot').find('.detail');
+			details.each(function(e) {
+				details.eq(e).click(function() {
+					var theID = $('.article-foot').find('#theID').eq(e).val();
+					// debugger;
+					changeToPostMethod('detail.action', {
+							id: theID
+					})
+				})
+			})
+
+			//修改
+			var updates = $('.article-foot').find('.update');
+			updates.each(function(e) {
+				updates.eq(e).click(function() {
+					var theID = $('.article-foot').find('#theID').eq(e).val();
+					var pageNum = $('#pageNum').val();
+					var title =$('#filterTitle').val();
+					changeToPostMethod('update-show.action', {
+						id: theID,
+						pageNum:pageNum,
+						title: title
+					})
+				})
+			})
+
+
+			//删除
+			var deletes = $('.article-foot').find('.delete');
+			deletes.each(function(e) {
+				deletes.eq(e).click(function() {
+					var theID = $('.article-foot').find('#theID').eq(e).val();
+					var path = $('.article-foot').find('#theTitle').eq(e).val();
+					var pageNum = $('#pageNum').val();
+					var title =$('#filterTitle').val();
+					changeToPostMethod('delete.action', {
+						id: theID,
+						pageNum:pageNum,
+						title: title,
+						content: path
+					})
+				})
+			})
+
+			//下载
+			var downloads = $('.article-foot').find('.download');
+			downloads.each(function(e) {
+				downloads.eq(e).click(function() {
+					var title =$('.article-foot').find('#theTitle').eq(e).val();
+					changeToPostMethod('download.action', {
+						title:title
+					})
+				})
+			})
+
+			//首页
+			$('#toFirstPage').click(function() {
+				var pageNum = 1;
+				var oldTitle = $('#oldTitle').val();
+				changeToPostMethod('search.action', {
+					pageNum: pageNum,
+					title: oldTitle
+				})
+			})
+			//尾页
+			$('#toLastPage').click(function() {
+				var allPageNum = $('#allPageNum').val();
+				var oldTitle = $('#oldTitle').val();
+				changeToPostMethod('search.action', {
+					pageNum: allPageNum,
+					title: oldTitle
+				})
+			})
+			//上一页
+			$('#backPage').click(function() {
+				var pageNum = $('#pageNum').val();
+				var oldTitle = $('#oldTitle').val();
+				if (pageNum > 1) {
+					pageNum--;
+					changeToPostMethod('search.action', {
+						 pageNum: pageNum,
+						 title: oldTitle
+					});
+				}
+			})
+
+			$('#forwardPage').click(function() {
+				var pageNum = $('#pageNum').val();
+				var allPageNum = $('#allPageNum').val();
+				var oldTitle = $('#oldTitle').val();
+				if (pageNum < allPageNum) {
+					pageNum++;
+					changeToPostMethod('search.action', {
+						 pageNum: pageNum,
+						 title: oldTitle
+					});
+				}
+			})
+
+			$('#toThePage').click(function() {
+				var pageNum = parseInt($('#toPage').val());
+				var allPageNum = parseInt($('#allPageNum').val());
+				var oldTitle = $('#oldTitle').val();
+				if (!(pageNum >=1 && pageNum <= allPageNum)) {
+					alert('页数有误');
+					document.getElementById('toPage').value = '';
+				} else {
+					changeToPostMethod('search.action', {
+						 pageNum: pageNum,
+						 title: oldTitle
+					});
+				}
+			})
+
+
+			function changeToPostMethod(toPage, ele) {
+				var myForm = document.createElement('form');
+				myForm.method = 'post';
+				myForm.action = toPage;
+				for (var e in ele) { //json循环
+					var myInput = document.createElement('input');
+					myInput.name = e;
+					myInput.value = ele[e];
+					myForm.appendChild(myInput);
+				}
+				document.body.appendChild(myForm);
+				myForm.submit();
+				document.body.removeChild(myForm);
+			}
+		})
+	</script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" th:href="@{/css/reset.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/common.css}">
+    <script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/common.js}"></script>
+    <style>
+    	span{
+    		color: red;
+    		font-size:11px;
+    	}
+    </style>
+<title>login</title>
+</head>
+<body>
+<!-- 好像是 如果是ajax异步校验传过去的值不会乱码 不需要强转  如果是表单传过去的值会乱码 需要强转 -->
+<!-- 1 -->
+	<div class="page-body">
+
+            <div class="page-content">
+                <form action="search.action?pageNum=1&title=" id="form1" method="post">
+                    <fieldset>
+                        <legend th:text="#{login_tip}"></legend>
+                        <table class="formtable" style="width:56%">
+                            <tr>
+                                <td><label class="modify-h2 control-label"  th:text="#{username}"></label></td>
+                                <td>
+	                                <div class="modify1 form-group">
+							                <input id="username" type="text" name="username"
+                                                   th:placeholder="#{username_tip}"
+		                                    onblur="checkName()" class="modify-title form-control"  style="display:inline-block;">
+		                                    &nbsp;&nbsp;&nbsp;<span id="userMsg"></span>
+							        </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><label class="modify-h2 control-label" th:text="#{password}"></label></td>
+                                <td>
+                                	<div class="modify1 form-group" >
+							                <input id="pwd" type="password" name="pwd"
+		                                     th:placeholder="#{password_tip}"
+		                                     onblur="checkPwd()" class="modify-title form-control"  style="display:inline-block;">
+		                                    &nbsp;&nbsp;&nbsp;<span id="pwdMsg"></span>
+							        </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="command">
+                                    <input type="button" th:value="#{login_tip}" class="clickbutton btn btn-default" onclick="check()" />
+                                    <input type="button" th:value="#{register}" class="clickbutton btn btn-default" onclick="window.location.href='regist.html';"/>
+                                </td>
+                                <td colspan="2" class="command">
+                                    <a th:href="@{/login.html(l='zh_CN')}">中文</a>
+                                    <a th:href="@{/login.html(l='en_US')}">英文</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+
+        <script>
+	        function checkName() {
+				var name = document.getElementById('username').value;
+				var userMsg = document.getElementById('userMsg');
+				if (name === '' || name === null) {
+					userMsg.innerHTML = '用户名不能为空';
+				} else {
+					$.post('ifExistUsername.action', {
+						'username': name
+					}, function(data) {
+						if (data === 'true') {
+							userMsg.innerHTML = '';
+						} else {
+							userMsg.innerHTML = '该用户不存在';
+						}
+					})
+				}
+			}
+
+			function checkPwd() {
+				var pwd = document.getElementById('pwd').value;
+				var pwdMsg = document.getElementById('pwdMsg');
+				if (pwd === '' || pwd === null) {
+					pwdMsg.innerHTML = '密码不能为空';
+				} else {
+					pwdMsg.innerHTML = '';
+				}
+			}
+
+			function check() {
+				var name = document.getElementById('username').value;
+				var pwd = document.getElementById('pwd').value;
+				var pwdMsg = document.getElementById('pwdMsg');
+				var userMsg = document.getElementById('userMsg');
+				var form1 = document.getElementById('form1');
+				if (name === '' || name === null) {
+					userMsg.innerHTML = '用户名不能为空';
+				} else if (pwd === '' || pwd === null) {
+					pwdMsg.innerHTML = '密码不能为空';
+				} else {
+					var flag = true;
+					$.when(
+						$.post('ifExistUsername.action', {
+							username: name
+						}, function(data) {
+							if(data === 'false') {
+								userMsg.innerHTML = '该用户不存在';
+								flag = false;
+							}
+						}),
+						$.post('ifThePwdIsRight.action', {
+							username: name,
+							password: pwd
+						}, function(data) {
+							if (flag) {
+								if(data === 'false') {
+									pwdMsg.innerHTML = '密码有误';
+									flag = false;
+								}
+							}
+
+						})
+					).done(function() {
+						console.log(flag)
+						if(flag) {
+							form1.submit();
+						}
+					})
+				}
+			}
+        </script>
+
+</body>
+</html>

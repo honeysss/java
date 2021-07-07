@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="com.wcl.mapper.UserMapper">
+
+    <resultMap id="resultMap" type="com.wcl.pojo.User">
+        <id column="userId" property="userId" jdbcType="INTEGER"></id>
+        <result column="username" property="username" jdbcType="VARCHAR"></result>
+        <result column="password" property="password" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <sql id="base_list">
+        userId, username, password
+    </sql>
+
+
+    <select id="ifExistUsername" resultMap="resultMap" parameterType="java.lang.String">
+        select
+        <include refid="base_list"></include>
+        from userinfo WHERE username = #{username, jdbcType=VARCHAR}
+    </select>
+
+
+    <select id="selectOneUser" resultMap="resultMap" parameterType="com.wcl.pojo.User">
+        select
+        <include refid="base_list"></include>
+        from userinfo WHERE username = #{username, jdbcType=VARCHAR}
+        and password = #{password, jdbcType=VARCHAR}
+    </select>
+
+
+    <insert id="insertUser" parameterType="java.lang.String">
+        insert into userinfo (username,password) values( #{username, jdbcType=VARCHAR}, #{password, jdbcType=VARCHAR})
+    </insert>
+
+</mapper>

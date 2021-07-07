@@ -1,0 +1,13 @@
+com\wcl\other\LazySingleton.class
+com\wcl\config\MyLocalResolver.class
+com\wcl\dao\UserMapper.class
+com\wcl\service\ArticleService.class
+com\wcl\pojo\User.class
+com\wcl\dao\ArticleMapper.class
+com\wcl\service\UserService.class
+com\wcl\controller\ArticleController.class
+com\wcl\controller\UserController.class
+com\wcl\other\HungrySingleton.class
+com\wcl\pojo\Article.class
+com\wcl\SrpringbootWebApplication.class
+com\wcl\config\MyMvcConfig.class

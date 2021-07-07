@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 绑定接口-->
+<mapper namespace="com.wcl.mapper.ArticleMapper">
+    <!-- resultMap结果集 -->
+    <resultMap id="resultMap" type="com.wcl.pojo.Article">
+        <id column="id" property="id" jdbcType="INTEGER"></id>
+        <result column="pubDate" property="pubDate" jdbcType="DATE"></result>
+        <result column="title" property="title" jdbcType="VARCHAR"></result>
+        <result column="author" property="author" jdbcType="VARCHAR"></result>
+        <result column="content" property="content" jdbcType="VARCHAR"></result>
+    </resultMap>
+
+    <sql id="base_list">
+        id, pubDate, title, author, content
+    </sql>
+
+    <!-- 通过文章名称查询是否已经存在该文章 -->
+    <select id="selectArticleByName" resultMap="resultMap" parameterType="java.lang.String">
+        select
+        <include refid="base_list"></include>
+        from article WHERE title = #{title, jdbcType=VARCHAR}
+    </select>
+
+    <!-- 增加文章 -->
+    <insert id="insertArticle" parameterType="com.wcl.pojo.Article">
+        insert into article values(null , sysdate() ,
+                                   #{title, jdbcType=VARCHAR}, #{author, jdbcType=VARCHAR},
+                                   #{content, jdbcType=VARCHAR})
+    </insert>
+
+    <!-- 查看某个文章信息 -->
+    <select id="selectArticleById" resultMap="resultMap" parameterType="java.lang.Integer">
+        select * from article WHERE id = #{id, jdbcType=INTEGER}
+    </select>
+
+    <!-- 修改文章 -->
+    <update id="updateArticleById" parameterType="com.wcl.pojo.Article">
+        update article set title=#{title, jdbcType=VARCHAR},
+                           author=#{author, jdbcType=VARCHAR}, content=#{content, jdbcType=VARCHAR}
+        where id=#{id, jdbcType=INTEGER}
+    </update>
+
+    <!-- 删除文章 -->
+    <delete id="deleteArticleById" parameterType="java.lang.Integer">
+        delete from article where id=#{id, jdbcType=INTEGER}
+    </delete>
+
+    <!-- 通过显示条数和符合的文章标题查询文章 -->
+    <select id="selectArticles" resultMap="resultMap"  parameterType="java.util.HashMap">
+
+        select * FROM article  where title like concat('%', #{title, jdbcType=VARCHAR},'%')
+        ORDER BY pubDate DESC limit  #{limit1, jdbcType=INTEGER},#{limit2, jdbcType=INTEGER}
+
+
+    </select>
+
+    <!-- 通过文章名称模糊查询一共有多少条数据 -->
+    <select id="selectAllNums" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select count(*) from article where title like concat('%', #{_parameter} ,'%')
+    </select>
+
+    <!-- 查询所有文章 -->
+    <select id="selectAllArticles" resultMap="resultMap">
+        select * from article
+    </select>
+
+    <!-- 插入文章记录 -->
+    <delete id="insertIntoArticle" >
+        insert into article values(null,sysdate(),'小红帽','雅可布·格林和威廉·格林','故事讲述了从前有个人见人爱的小姑娘，喜欢戴着外婆送给她的一顶红色天鹅绒的帽子，于是大家就叫她小红帽。有一天，母亲叫她给住在森林的外婆送食物，并嘱咐她不要离开大路，走得太远。小红帽在森林中遇见了狼，她从未见过狼，也不知道狼性凶残，于是告诉了狼她要去森林里看望自己的外婆。狼知道后诱骗小红帽去采野花，自己到林中小屋把小红帽的外婆吃了。后来他伪装成外婆，等小红帽来找外婆时，狼一口把她吃掉了。幸好后来一个勇敢的猎人把小红帽和外婆从狼肚里救了出来。')
+    </delete>
+
+</mapper>

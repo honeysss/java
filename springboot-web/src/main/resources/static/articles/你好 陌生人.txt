@@ -1,0 +1,8 @@
+内容我不是特别
+的
+  清楚
+你呢
+System.getProperty("user.dir");参数即可获得项目相对路径。（ps：不知道是不是springboot内嵌tomcat容器的原因，用网上的request.getServletContext().getRealPath("/")方法获得的路径不是项目路径，而是c盘下一个tomcat目录路径
+————————————————
+版权声明：本文为CSDN博主「maybe-not」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/qq_29669265/article/details/89678077

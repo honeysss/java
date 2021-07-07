@@ -1,0 +1,38 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+ 	<meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <title>文章详情</title>
+</head>
+<style>
+    pre {
+        background: white;
+        border: none;
+        font-family: '宋体';
+    }
+</style>
+<body>
+<!--    顶部内容-->
+<div class="top-content">
+    <h1 class="top-h1">文章详情</h1>
+</div>
+
+<!--    中间内容-->
+<div class="show-middle-content">
+    <!--        文章信息-->
+    <div class="article-list">
+        <h1 class="article-show-title" th:text="${article.title }"></h1>
+        <p class="article-show-author" th:text="${article.author }"></p>
+        <p class="article-show-date" th:text="${article.pubDate }">发布日期：</p>
+        <pre class="article-show-content" th:text="${article.content }">
+        </pre>
+    </div>
+ </div>
+</body>
+</html>
